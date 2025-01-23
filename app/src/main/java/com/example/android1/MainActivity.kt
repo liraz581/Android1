@@ -46,20 +46,51 @@ class MainActivity : AppCompatActivity() {
 
     private fun onButtonClick(view: View?) {
         val button = view as Button
-
-        if (button.text === "") {
-            button.text = nextToPlay
-            nextToPlay = if (nextToPlay === "X") "O" else "X"
-
+        if (button.text.isEmpty() && !gameEnded) {
             val gameStatus: TextView = findViewById(R.id.gameStatus)
-            status = "$nextToPlay To Play"
-            gameStatus.text = status
+            button.text = nextToPlay
+            nextToPlay = if (nextToPlay == "X") "O" else "X"
+            gameStatus.text = "$nextToPlay To Play"
+            gameEnded = isGameFinished()
+            if(gameEnded) {
+                val resetButton: Button = findViewById(R.id.resetButton)
+                resetButton.visibility = View.VISIBLE
+                gameStatus.text = status
+            }
 
-            val resetButton: Button = findViewById(R.id.resetButton)
-            resetButton.visibility = if (gameEnded) View.VISIBLE else View.INVISIBLE
         }
     }
 
+    private fun isGameFinished() : Boolean{
+        val board = buttonIds.map { id ->
+            findViewById<Button>(id).text.toString()
+        }
+
+        val winningCombinations = listOf(
+            listOf(0, 1, 2),
+            listOf(3, 4, 5),
+            listOf(6, 7, 8),
+            listOf(0, 3, 6),
+            listOf(1, 4, 7),
+            listOf(2, 5, 8),
+            listOf(0, 4, 8),
+            listOf(2, 4, 6)
+        )
+
+        for (combination in winningCombinations) {
+            val (a, b, c) = combination
+            if (board[a].isNotEmpty() && board[a] == board[b] && board[a] == board[c]) {
+                status = "Winner: ${board[a]}"
+                return true
+                }
+            }
+        if (board.all { it.isNotEmpty() }) {
+            status = "It's a Draw!"
+            return true
+        }
+
+        return false
+    }
     private fun onResetClick(){
         for (btnId in buttonIds) {
             findViewById<Button>(btnId).text = ""
@@ -71,5 +102,6 @@ class MainActivity : AppCompatActivity() {
         gameStatus.text = status
         val resetButton: Button = findViewById(R.id.resetButton)
         resetButton.visibility = View.INVISIBLE
-        }
     }
+}
+
