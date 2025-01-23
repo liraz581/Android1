@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
                 onButtonClick(it)
             }
         }
+        findViewById<Button>(R.id.resetButton).setOnClickListener{
+            onResetClick()
+        }
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -51,6 +54,22 @@ class MainActivity : AppCompatActivity() {
             val gameStatus: TextView = findViewById(R.id.gameStatus)
             status = "$nextToPlay To Play"
             gameStatus.text = status
+
+            val resetButton: Button = findViewById(R.id.resetButton)
+            resetButton.visibility = if (gameEnded) View.VISIBLE else View.INVISIBLE
         }
     }
-}
+
+    private fun onResetClick(){
+        for (btnId in buttonIds) {
+            findViewById<Button>(btnId).text = ""
+        }
+        nextToPlay="X"
+        gameEnded = false
+        status = "$nextToPlay To Play"
+        val gameStatus: TextView = findViewById(R.id.gameStatus)
+        gameStatus.text = status
+        val resetButton: Button = findViewById(R.id.resetButton)
+        resetButton.visibility = View.INVISIBLE
+        }
+    }
